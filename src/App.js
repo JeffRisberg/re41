@@ -69,6 +69,7 @@ function AdminDashboard() {
         <option>Alice</option>
         <option>Bob</option>
         <option>Carol</option>
+        <option>Dave</option>
       </select>
       <Dashboard name={user} />
     </>
