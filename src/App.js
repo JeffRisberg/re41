@@ -43,13 +43,13 @@ function SearchResult() { // component
   const suggestedQueries = useContext(SuggestedQueriesContext);
 
   const rows = suggestedQueries.map((query, index) => {
-    return { "id": index, "query": query, "result": 5 };
+    return { "id": index, "query": query, "result": "The steps for resetting your password" };
   });
 
   const columns = [
     { field: "id", headerName: "Id", width: 70 },
-    { field: "query", headerName: "Query", width: 200 },
-    { field: "result", headerName: "Result", width: 400 }
+    { field: "query", headerName: "Query", width: 350 },
+    { field: "result", headerName: "Result", width: 500 }
   ];
 
   return (
@@ -82,7 +82,7 @@ function SearchResults() { // component
 
 function Dashboard({ entityName }) {
   return (
-    <EntityNameContext.Provider value={entityName}>
+    <EntityNameContext.Provider value={entityName}> // this builds a new provider, we don't change an existing one
       <Header />
       <SearchResults />
     </EntityNameContext.Provider>
@@ -91,11 +91,12 @@ function Dashboard({ entityName }) {
 
 function AdminDashboard() { // primary component
   const [entityName, setEntityName] = useState("Tickets");
+
   return (
     <>
       <select value={entityName} onChange={(evt) => setEntityName(evt.target.value)}>
         <option>Tickets</option>
-        <option>Knowledge Artices</option>
+        <option>Knowledge Articles</option>
         <option>Users</option>
         <option>Intents</option>
         <option>Requests</option>
@@ -108,7 +109,7 @@ function AdminDashboard() { // primary component
 function App() { // top-level component
   const suggestedQueries = [
     "Are there any blockers in the Alaska release?",
-    "what PRs are open for Brazil release?",
+    "What PRs are open for Brazil release?",
     "Any high priority tickets for Cambodia?"
   ];
   return (
