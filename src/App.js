@@ -1,83 +1,121 @@
-import { useState, createContext, useContext } from "react";
+import React, { createContext, useContext, useState } from "react";
+import { DataGrid } from '@mui/x-data-grid';
+
 
 const BUTTON_STYLE = {
   display: "inline-block",
   padding: "4px 10px",
   background: "transparent",
-  border: "0",
+  border: "0"
 };
 
 const HEADER_STYLE = {
   display: "flex",
   justifyContent: "flex-end",
-  borderBottom: "1px solid",
+  borderBottom: "1px solid"
 };
 
-const NameContext = createContext();
+const EntityNameContext = createContext();
+const SuggestedQueriesContext = createContext();
 
-function Button({ children }) {
+function Button({ children }) { // component
   return <button style={BUTTON_STYLE}>{children}</button>;
 }
 
-function UserButton() {
-  const name = useContext(NameContext);
-  return <Button>👤 {name}</Button>;
+function UserButton() { // component
+  const entityName = useContext(EntityNameContext);
+  return <Button>👤 {entityName}</Button>;
 }
 
-function Header() {
+function Header() { // component
   return (
     <header style={HEADER_STYLE}>
-      <Button>Home</Button>
-      <Button>Groups</Button>
+      <Button>RE41</Button>
+      <Button>Search</Button>
       <Button>Profile</Button>
       <UserButton />
     </header>
   );
 }
 
-function Welcome() {
-  const name = useContext(NameContext);
+function SearchResult() { // component
+  const entityName = useContext(EntityNameContext);
+  const suggestedQueries = useContext(SuggestedQueriesContext);
+
+  const rows = suggestedQueries.map((query, index) => {
+    return { "id": index, "query": query, "result": 5 };
+  });
+
+  const columns = [
+    { field: "id", headerName: "Id", width: 70 },
+    { field: "query", headerName: "Query", width: 200 },
+    { field: "result", headerName: "Result", width: 400 }
+  ];
+
   return (
     <section>
-      <h1>Welcome, {name}!</h1>
+      <h1>Queries against {entityName}</h1>
+      <div style={{ height: 400, width: "100%" }}>
+        <DataGrid
+          rows={rows}
+          columns={columns}
+          initialState={{
+            pagination: {
+              paginationModel: { page: 0, pageSize: 5 }
+            }
+          }}
+          pageSizeOptions={[5, 10]}
+          checkboxSelection
+        />
+      </div>
     </section>
   );
 }
 
-function Main() {
+function SearchResults() { // component
   return (
     <main>
-      <Welcome />
+      <SearchResult />
     </main>
   );
 }
 
-function Dashboard({ name }) {
+function Dashboard({ entityName }) {
   return (
-    <NameContext.Provider value={name}>
+    <EntityNameContext.Provider value={entityName}>
       <Header />
-      <Main />
-    </NameContext.Provider>
+      <SearchResults />
+    </EntityNameContext.Provider>
   );
 }
 
-function AdminDashboard() {
-  const [user, setUser] = useState("Alice");
+function AdminDashboard() { // primary component
+  const [entityName, setEntityName] = useState("Tickets");
   return (
     <>
-      <select value={user} onChange={(evt) => setUser(evt.target.value)}>
-        <option>Alice</option>
-        <option>Bob</option>
-        <option>Carol</option>
-        <option>Dave</option>
+      <select value={entityName} onChange={(evt) => setEntityName(evt.target.value)}>
+        <option>Tickets</option>
+        <option>Knowledge Artices</option>
+        <option>Users</option>
+        <option>Intents</option>
+        <option>Requests</option>
       </select>
-      <Dashboard name={user} />
+      <Dashboard entityName={entityName} />
     </>
   );
 }
 
-function App() {
-  return <AdminDashboard />;
+function App() { // top-level component
+  const suggestedQueries = [
+    "Are there any blockers in the Alaska release?",
+    "what PRs are open for Brazil release?",
+    "Any high priority tickets for Cambodia?"
+  ];
+  return (
+    <SuggestedQueriesContext.Provider value={suggestedQueries}>
+      <AdminDashboard />
+    </SuggestedQueriesContext.Provider>
+  );
 }
 
 export default App;
